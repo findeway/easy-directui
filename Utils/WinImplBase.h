@@ -1,6 +1,6 @@
 #ifndef WIN_IMPL_BASE_HPP
 #define WIN_IMPL_BASE_HPP
-
+#include "WindowShadow.h"
 namespace DuiLib
 {
 
@@ -22,12 +22,14 @@ namespace DuiLib
 	public:
 		WindowImplBase()
 		{
+			m_bShowDWMShadow = false;
 			m_bShowShadow = false;
 		};
 		virtual ~WindowImplBase(){};
 		virtual void InitWindow(){};
 		virtual void OnFinalMessage( HWND hWnd );
 		virtual void Notify(TNotifyUI& msg);
+		void SetDWMShadowVisible(bool bVisible);
 		void SetShadowVisible(bool bVisible);
 		void ShowWindow(bool bShow = true, bool bTakeFocus = true);
 		UINT ShowModal();
@@ -42,8 +44,10 @@ namespace DuiLib
 		void ShowShadow();
 
 		CPaintManagerUI m_PaintManager;
-		static LPBYTE m_lpResourceZIPBuffer;
-		bool		  m_bShowShadow;
+		static LPBYTE	m_lpResourceZIPBuffer;
+		bool			m_bShowDWMShadow;			//shadow implement using dwmapi
+		bool			m_bShowShadow;				//shadow umplement not using dwmapi
+		CShadowWnd		m_ShadowWnd;
 
 	public:
 		virtual UINT GetClassStyle() const;

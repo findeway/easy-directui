@@ -219,6 +219,7 @@ HANDLE CPaintManagerUI::GetResourceZipHandle()
 void CPaintManagerUI::SetInstance(HINSTANCE hInst)
 {
     m_hInstance = hInst;
+	CShadowWnd::Initialize(hInst);
 }
 
 void CPaintManagerUI::SetCurrentPath(LPCTSTR pStrPath)

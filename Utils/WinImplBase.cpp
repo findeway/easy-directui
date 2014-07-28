@@ -338,6 +338,13 @@ namespace DuiLib
         m_PaintManager.AddNotifier(this);
         m_PaintManager.SetBackgroundTransparent(TRUE);
 
+		if(m_bShowShadow)
+		{
+			//create shadow
+			m_ShadowWnd.Create(GetHWND());
+			m_ShadowWnd.SetPosition(0,0);
+			m_ShadowWnd.SetSize(4);
+		}
         InitWindow();
         return 0;
     }
@@ -511,7 +518,7 @@ namespace DuiLib
         return CNotifyPump::NotifyPump(msg);
     }
 
-    void WindowImplBase::SetShadowVisible(bool bVisible)
+    void WindowImplBase::SetDWMShadowVisible(bool bVisible)
     {
 #ifdef _DWM_SHADOW
         if (IsVista() && bVisible)
@@ -520,19 +527,19 @@ namespace DuiLib
             DwmIsCompositionEnabled(&bEnabled);
             if (bEnabled)
             {
-                m_bShowShadow = true;
+                m_bShowDWMShadow = true;
             }
         }
         else
         {
-            m_bShowShadow = false;
+            m_bShowDWMShadow = false;
         }
 #endif
     }
 
     void WindowImplBase::ShowWindow(bool bShow /*= true*/, bool bTakeFocus /*= true*/)
     {
-        if (m_bShowShadow && bShow)
+        if (m_bShowDWMShadow && bShow)
         {
             ::SetTimer(GetHWND(), ID_TIMER_SHOWSHADOW, TIMER_DELAY_SHADOW, NULL);
         }
@@ -542,7 +549,7 @@ namespace DuiLib
     void WindowImplBase::ShowShadow()
     {
 #ifdef _DWM_SHADOW
-        if (IsVista() && m_bShowShadow)
+        if (IsVista() && m_bShowDWMShadow)
         {
             int margin = -1;
             MARGINS margins;
@@ -571,7 +578,7 @@ namespace DuiLib
         UINT nRet = 0;
         HWND hWndParent = GetWindowOwner(m_hWnd);
         ::ShowWindow(m_hWnd, SW_SHOWNORMAL);
-        if (m_bShowShadow)
+        if (m_bShowDWMShadow)
         {
             ::SetTimer(GetHWND(), ID_TIMER_SHOWSHADOW, TIMER_DELAY_SHADOW, NULL);
         }
@@ -600,11 +607,16 @@ namespace DuiLib
 
     BOOL WindowImplBase::AnimateWindow(DWORD dwTime, DWORD dwFlag)
     {
-        if (m_bShowShadow)
+        if (m_bShowDWMShadow)
         {
             ::SetTimer(GetHWND(), ID_TIMER_SHOWSHADOW, TIMER_DELAY_SHADOW, NULL);
         }
         return ::AnimateWindow(GetHWND(), dwTime, dwFlag);
     }
+
+	void WindowImplBase::SetShadowVisible( bool bVisible )
+	{
+		m_bShowShadow = bVisible;
+	}
 
 }
